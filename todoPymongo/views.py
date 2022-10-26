@@ -12,13 +12,10 @@ from .models import demo
 from .serializers import  UserSerializer
 from .db_config import pymongo_db
 
-
 class Creation_Class(APIView):
-
     def get(self,request, format=None):
         try:
             user_data = JSONParser().parse(request)
-            print("\nuser_data : ",user_data)
             myquery = ({"username":user_data['username']})
             mycol = pymongo_db()
             users = mycol.find(myquery)
@@ -28,8 +25,6 @@ class Creation_Class(APIView):
         except Exception as ex:
             return Response({"Exception Occurred For GET Method Request": str(ex)})
 
-
-
     def post(self,request, format=None):
 
         try:
@@ -37,8 +32,7 @@ class Creation_Class(APIView):
             mycol = pymongo_db()
             user_serializer = UserSerializer(data=user_data)
 
-
-            if user_serializer.is_valid():
+           if user_serializer.is_valid():
                 user_serializer.save()
                 return Response("Insertion Successful")
             return Response("Insertion Failed")
@@ -49,22 +43,17 @@ class Creation_Class(APIView):
 
 
 class Manipulation_Class(APIView):
-
-
     @csrf_exempt
     def put(self,request,id):
         try:
-
             mycol = pymongo_db()
             user_data = JSONParser().parse(request)
             print("\nuser_data : ", user_data)
             user_data['updation_time'] = datetime.now()
-
             myquery = {"userid": id }
             newvalues = {"$set": user_data}
             mycol.update_one(myquery, newvalues)
             return Response("Updated Successfully")
-
 
         except Exception as ex:
             return Response( {"Exception Occurred For Updation Request" : str(ex) })
@@ -72,7 +61,6 @@ class Manipulation_Class(APIView):
 
     def delete(self,request,id):
         try:
-
             mycol = pymongo_db()
             user_data = JSONParser().parse(request)
             mycol.delete_one({"userid":id})
